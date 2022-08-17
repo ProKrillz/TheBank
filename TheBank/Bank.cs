@@ -2,7 +2,7 @@
 {
     public class Bank
     {
-        public string _bankName;
+        readonly string _bankName;
         int _idCounter;
         List<Account> _accounts;
 
@@ -13,8 +13,9 @@
         }
         public void CreateAccount(string name)
         {
-            _accounts.Add(new Account { Id = _idCounter++, Name = name, Balance = 0 });
+            _accounts.Add(new Account { Id = ++_idCounter, Name = name, Balance = 0 });
         }
+        public string GetBankName() { return _bankName; }
         public List<Account> GetAccounts() { return _accounts; }
         public decimal Deposit(Account account, decimal money)
         {

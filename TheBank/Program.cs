@@ -14,8 +14,7 @@
                 switch (InputString("Choise: "))
                 {
                     case "a":
-                        theBank.CreateAccount(InputString("Name: "));
-                        Console.ReadKey();
+                        theBank.CreateAccount(InputString("Name: "), CreateAccountMenu());
                         break;
                     case "d":
                         PrintListUsers(theBank.GetAccounts());
@@ -46,6 +45,9 @@
                         Console.WriteLine($"Bank name: {theBank.GetBankName()}");
                         Console.ReadKey();
                         break;
+                    case "c":
+                        theBank.ChargeInterest();
+                        break;
                     case "x":
                         runTime = false;
                         break;
@@ -67,18 +69,37 @@
             Console.WriteLine("s = Show balance");
             Console.WriteLine("h = BankHolding");
             Console.WriteLine("b = Bank");
+            Console.WriteLine("c = ChargeInterest");
             Console.WriteLine("x = Exit");
         }
         /// <summary>
         /// Show account id and name from accountlist
         /// </summary>
         /// <param name="list"></param>
+        public static AccountType CreateAccountMenu()
+        {
+            do
+            {
+                switch (InputInt("1 = Checking\n2 = Savings\n3 = Costumer "))
+                {
+                    case 1:
+                        return AccountType.Checking;
+                    case 2:
+                        return AccountType.Savings;
+                    case 3:
+                        return AccountType.Consumer;
+                    default:
+                        break;
+                }
+            } while (true);
+        }
         public static void PrintListUsers(List<Account> list)
         {
             foreach (Account account in list)
             {
                 Console.WriteLine(account.Id);
                 Console.WriteLine(account.Name);
+                Console.WriteLine(account.Type);
                 Console.WriteLine();
             }
         }

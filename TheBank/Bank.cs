@@ -15,9 +15,22 @@
         /// Creates a user with name and count id with 1 and add to accountlist
         /// </summary>
         /// <param name="name"></param>
-        public void CreateAccount(string name)
+        public void CreateAccount(string name, AccountType type)
         {
-            _accounts.Add(new Account { Id = ++_idCounter, Name = name, Balance = 0 });
+            switch (type)
+            {
+                case AccountType.Checking:
+                    _accounts.Add(new Checking { Id = ++_idCounter, Name = name, Type = type });
+                    break;
+                case AccountType.Savings:
+                    _accounts.Add(new Savings { Id = ++_idCounter, Name = name, Type = type });
+                    break;
+                case AccountType.Consumer:
+                    _accounts.Add(new Consumer { Id = ++_idCounter, Name = name, Type = type });
+                    break;
+                default:
+                    break;
+            }
         }
         /// <summary>
         /// Returns bank name
@@ -70,6 +83,12 @@
             }
             return bankhold;
         }
-
+        public void ChargeInterest()
+        {
+            foreach (Account item in _accounts)
+            {
+                item.ChargeInterest();
+            }
+        }
     }
 }

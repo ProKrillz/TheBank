@@ -1,6 +1,10 @@
-﻿namespace TheBank
+﻿using TheBank.DAL;
+using TheBank.Models;
+using TheBank.Repository;
+
+namespace TheBank.BLL
 {
-    public class Bank
+    public class Bank : IBank
     {
         readonly string _bankName;
         int _idCounter;
@@ -89,6 +93,16 @@
             {
                 item.ChargeInterest();
             }
+        }
+
+        public List<AccountListItem> GetAllAcc()
+        {
+            List<AccountListItem> acc = new List<AccountListItem>();
+            foreach (Account item in _accounts)
+            {
+                acc.Add(new AccountListItem { Id = item.Id, Name = item.Name, Balance = item.Balance, Type = item.Type});
+            }
+            return acc;
         }
     }
 }

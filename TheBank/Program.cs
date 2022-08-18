@@ -1,4 +1,8 @@
-﻿namespace TheBank
+﻿using TheBank.BLL;
+using TheBank.Models;
+using TheBank.DAL;
+
+namespace TheBank
 {
     static class program
     {
@@ -17,21 +21,25 @@
                         theBank.CreateAccount(InputString("Name: "), CreateAccountMenu());
                         break;
                     case "d":
-                        PrintListUsers(theBank.GetAccounts());
+                        PrintListUsers(theBank.GetAllAcc());
                         int accountId = InputInt("Pick id: ");
                         Account foundAccount = theBank.GetAccounts().Find(x => x.Id == accountId);
                         Console.WriteLine(theBank.Deposit(foundAccount, InputDecimal("Deposit amount: ")));
                         Console.ReadKey();
                         break;
                     case "w":
-                        PrintListUsers(theBank.GetAccounts());
+                        PrintListUsers(theBank.GetAllAcc());
                         int accountIdW = InputInt("Pick id: ");
                         Account foundAccountW = theBank.GetAccounts().Find(x => x.Id == accountIdW);
                         Console.WriteLine(theBank.Withdraw(foundAccountW, InputDecimal("Deposit amount: ")));
                         Console.ReadKey();
                         break;
+                    case "sa":
+                        PrintListUsers(theBank.GetAllAcc());
+                        Console.ReadKey();
+                        break;
                     case "s":
-                        PrintListUsers(theBank.GetAccounts());
+                        PrintListUsers(theBank.GetAllAcc());
                         int accountIdS = InputInt("Pick id: ");
                         Account foundAccountS = theBank.GetAccounts().Find(x => x.Id == accountIdS);
                         Console.WriteLine($"{foundAccountS.Name} Balance: {theBank.Balance(foundAccountS)}");
@@ -66,7 +74,8 @@
             Console.WriteLine("a = Create account");
             Console.WriteLine("d = Deposit");
             Console.WriteLine("w = Witdraw");
-            Console.WriteLine("s = Show balance");
+            Console.WriteLine("sa = Show all users");
+            Console.WriteLine("s = Show balance on user");
             Console.WriteLine("h = BankHolding");
             Console.WriteLine("b = Bank");
             Console.WriteLine("c = ChargeInterest");
@@ -93,13 +102,14 @@
                 }
             } while (true);
         }
-        public static void PrintListUsers(List<Account> list)
+        public static void PrintListUsers(List<AccountListItem> list)
         {
-            foreach (Account account in list)
+            foreach (var account in list)
             {
-                Console.WriteLine(account.Id);
-                Console.WriteLine(account.Name);
-                Console.WriteLine(account.Type);
+                Console.WriteLine($"Id: {account.Id}");
+                Console.WriteLine($"Name: {account.Name}");
+                Console.WriteLine($"Type: {account.Type}");
+                Console.WriteLine($"Balance: {account.Balance}");
                 Console.WriteLine();
             }
         }

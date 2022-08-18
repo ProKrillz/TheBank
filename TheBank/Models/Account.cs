@@ -1,4 +1,4 @@
-﻿namespace TheBank
+﻿namespace TheBank.Models
 {
     public abstract class Account
     {
@@ -56,5 +56,5 @@
             }
         }
     }
-   
+
 }

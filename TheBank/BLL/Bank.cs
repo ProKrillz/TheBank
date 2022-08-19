@@ -1,4 +1,5 @@
 ﻿using TheBank.DAL;
+using TheBank.Exceptions;
 using TheBank.Models;
 using TheBank.Repository;
 
@@ -65,7 +66,16 @@ namespace TheBank.BLL
         /// <returns>decimal</returns>
         public decimal Withdraw(Account account, decimal money)
         {
-            account.Balance -= money;
+            try
+            {
+                if (account.Balance < money)
+                    throw new OverdraftException("Balance will go in minus, not allow");
+                account.Balance -= money;
+            }
+            catch (OverdraftException e)
+            {
+                Console.WriteLine(e.Message);
+            }   
             return account.Balance;
         }
         /// <summary>

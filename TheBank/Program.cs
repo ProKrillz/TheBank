@@ -1,176 +1,70 @@
 ﻿using TheBank.BLL;
 using TheBank.Models;
 using TheBank.DAL;
+using Microsoft.Extensions.DependencyInjection;
+using TheBank.Repository;
 
-namespace TheBank
+namespace TheBank;
+
+static class program
 {
-    static class program
+    public static void Main()
     {
-        public static void Main()
-        {
-            Bank theBank = new Bank("Krillz Bank Of Doom");
-            bool runTime = true;
-            do
-            {
-                Console.Clear();
-                Console.WriteLine(theBank.GetBankName());
-                Menu();
-                switch (InputString("Choise: "))
-                {
-                    case "a":
-                        theBank.CreateAccount(InputString("Name: "), CreateAccountMenu());
-                        break;
-                    case "d":
-                        PrintListUsers(theBank.GetAllAcc());
-                        int accountId = InputInt("Pick id: ");
-                        Account foundAccount = theBank.GetAccounts().Find(x => x.Id == accountId);
-                        Console.WriteLine(theBank.Deposit(foundAccount, InputDecimal("Deposit amount: ")));
-                        Console.ReadKey();
-                        break;
-                    case "w":
-                        PrintListUsers(theBank.GetAllAcc());
-                        int accountIdW = InputInt("Pick id: ");
-                        Account foundAccountW = theBank.GetAccounts().Find(x => x.Id == accountIdW);
-                        Console.WriteLine(theBank.Withdraw(foundAccountW, InputDecimal("Deposit amount: ")));
-                        Console.ReadKey();
-                        break;
-                    case "sa":
-                        PrintListUsers(theBank.GetAllAcc());
-                        Console.ReadKey();
-                        break;
-                    case "s":
-                        PrintListUsers(theBank.GetAllAcc());
-                        int accountIdS = InputInt("Pick id: ");
-                        Account foundAccountS = theBank.GetAccounts().Find(x => x.Id == accountIdS);
-                        Console.WriteLine($"{foundAccountS.Name} Balance: {theBank.Balance(foundAccountS)}");
-                        Console.ReadKey();
-                        break;
-                    case "h":
-                        Console.WriteLine($"Bank holding: {theBank.BankHolding()}");
-                        Console.ReadKey();
-                        break;
-                    case "b":
-                        Console.WriteLine($"Bank name: {theBank.GetBankName()}");
-                        Console.ReadKey();
-                        break;
-                    case "c":
-                        theBank.ChargeInterest();
-                        break;
-                    case "x":
-                        runTime = false;
-                        break;
-                    default:
-                        break;
-                }
+        var serviceProvider = new ServiceCollection().AddSingleton<IBank, Repo>().AddSingleton<IInput, RepoInput>().BuildServiceProvider();
 
-            } while (runTime);
-        }
-        /// <summary>
-        /// Show menu
-        /// </summary>
-        public static void Menu() 
-        {  
-            Console.WriteLine("Menu");
-            Console.WriteLine("a = Create account");
-            Console.WriteLine("d = Deposit");
-            Console.WriteLine("w = Witdraw");
-            Console.WriteLine("sa = Show all users");
-            Console.WriteLine("s = Show balance on user");
-            Console.WriteLine("h = BankHolding");
-            Console.WriteLine("b = Bank");
-            Console.WriteLine("c = ChargeInterest");
-            Console.WriteLine("x = Exit");
-        }
-        /// <summary>
-        /// Show account id and name from accountlist
-        /// </summary>
-        /// <param name="list"></param>
-        public static AccountType CreateAccountMenu()
+        Bank theBank = new Bank("Krillz Bank Of Doom", serviceProvider.GetService<IBank>(), serviceProvider.GetService<IInput>());
+        bool runTime = true;
+        do
         {
-            do
+            Console.Clear();
+            Console.WriteLine(theBank.GetBankName());
+            theBank.Menu();
+            
+            switch (theBank.ifi.InputString("Choise: "))
             {
-                switch (InputInt("1 = Checking\n2 = Savings\n3 = Costumer "))
-                {
-                    case 1:
-                        return AccountType.Checking;
-                    case 2:
-                        return AccountType.Savings;
-                    case 3:
-                        return AccountType.Consumer;
-                    default:
-                        break;
-                }
-            } while (true);
-        }
-        public static void PrintListUsers(List<AccountListItem> list)
-        {
-            foreach (var account in list)
-            {
-                Console.WriteLine($"Id: {account.Id}");
-                Console.WriteLine($"Name: {account.Name}");
-                Console.WriteLine($"Type: {account.Type}");
-                Console.WriteLine($"Balance: {account.Balance}");
-                Console.WriteLine();
+                case "a":
+                    theBank.ifb.CreateAccount(theBank.ifi.InputString("Name: "), theBank.ifi.CreateAccountMenu());
+                    break;
+                case "d":
+                    theBank.ifi.PrintListUsers(theBank.ifb.GetAllAcc());
+                    Account foundAccount = theBank.ifb.GetAccounts().Find(x => x.Id == theBank.ifi.InputInt("Pick id: "));
+                    theBank.ifb.Deposit(foundAccount, theBank.ifi.InputDecimal("Deposit amount: "));
+                    Console.ReadKey();
+                    break;
+                case "w":
+                    theBank.ifi.PrintListUsers(theBank.ifb.GetAllAcc());
+                    Account foundAccountW = theBank.ifb.GetAccounts().Find(x => x.Id == theBank.ifi.InputInt("Pick id: "));
+                    theBank.ifb.Withdraw(foundAccountW, theBank.ifi.InputDecimal("Deposit amount: "));
+                    Console.ReadKey();
+                    break;
+                case "sa":
+                    theBank.ifi.PrintListUsers(theBank.ifb.GetAllAcc());
+                    Console.ReadKey();
+                    break;
+                case "s":
+                    theBank.ifi.PrintListUsers(theBank.ifb.GetAllAcc());
+                    Account foundAccountS = theBank.ifb.GetAccounts().Find(x => x.Id == theBank.ifi.InputInt("Pick id: "));
+                    Console.WriteLine($"{foundAccountS.Name} Balance: {theBank.ifb.Balance(foundAccountS)}");
+                    Console.ReadKey();
+                    break;
+                case "h":
+                    Console.WriteLine($"Bank holding: {theBank.ifb.BankHolding()}");
+                    Console.ReadKey();
+                    break;
+                case "b":
+                    Console.WriteLine($"Bank name: {theBank.GetBankName()}");
+                    Console.ReadKey();
+                    break;
+                case "c":
+                    theBank.ifb.ChargeInterest();
+                    break;
+                case "x":
+                    runTime = false;
+                    break;
+                default:
+                    break;
             }
-        }
-        /// <summary>
-        /// Writeline for returning only string
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns>string</returns>
-        static string InputString(string text)
-        {
-            while (true)
-            {
-                Console.Write(text);
-                string? indput = Console.ReadLine();
-                if (indput.Length > 0)
-                    return indput;
-            }
-        }
-        /// <summary>
-        /// Writeline for returning only int
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns>int</returns>
-        static int InputInt(string text)
-        {
-            int value;
-            while (true)
-            {
-                Console.Write(text);
-                try
-                {
-                    return value = Convert.ToInt32(Console.ReadLine());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
-        }
-        /// <summary>
-        /// Writeline for returning only decimal
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns>decimal</returns>
-        static decimal InputDecimal(string text)
-        {
-            decimal value;
-            while (true)
-            {
-                Console.Write(text);
-                try
-                {
-                    return value = Convert.ToDecimal(Console.ReadLine());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    throw;
-                }
-            }
-        }
+        } while (runTime);
     }
 }
 

@@ -1,9 +1,8 @@
-﻿namespace TheBank
+﻿namespace TheBank;
+
+public enum AccountType
 {
-    public enum AccountType
-    {
-        Checking,
-        Savings,
-        Consumer
-    }
+    Checking,
+    Savings,
+    Consumer
 }
